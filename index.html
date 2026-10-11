@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#07070a">
+    <title>Producer360 | Pulzus</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <main class="game-shell">
+        <header class="hero">
+            <div class="eyebrow">Producer360 · napi bemelegítés</div>
+            <h1>PULZUS</h1>
+            <p>Tartsd a tempót. Akkor is, amikor már kevesebb segítséget kapsz.</p>
+        </header>
+
+        <section class="daily-card" aria-labelledby="daily-title">
+            <div class="daily-topline">
+                <span id="daily-title">NAPI RUTIN</span>
+                <strong id="stage-display">1 / 5 · STABILITÁS</strong>
+            </div>
+
+            <div class="daily-progress" aria-label="Öt körös blokk">
+                <span class="daily-step active"></span>
+                <span class="daily-step"></span>
+                <span class="daily-step"></span>
+                <span class="daily-step"></span>
+                <span class="daily-step"></span>
+            </div>
+
+            <div class="daily-meta">
+                <div>
+                    <small>ÜTEMEK</small>
+                    <strong id="beat-progress">0 / 8</strong>
+                </div>
+                <div>
+                    <small id="block-status-label">NAPI ÁLLAPOT</small>
+                    <strong id="daily-status">0 / 5</strong>
+                </div>
+                <div>
+                    <small>AKTUÁLIS BPM</small>
+                    <strong id="bpm-display">66</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="practice-card" id="practice-card">
+            <div class="practice-heading">
+                <div>
+                    <span class="section-kicker">GYAKORLÓ MÓD</span>
+                    <h2 id="mode-title">STABILITÁS</h2>
+                </div>
+                <span class="mode-chip" id="assist-chip">VIZUÁL 100%</span>
+            </div>
+
+            <p class="mode-copy" id="mode-copy">Kövesd a körön haladó jelölőt. Akkor koppints, amikor felér a célponthoz.</p>
+
+            <div class="circle-stage" id="circle-stage" aria-label="Kör alakú timing vizuál">
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring orbit-ring-inner"></div>
+                <div class="target-dot" aria-hidden="true"></div>
+                <div class="orbit-hand" id="orbit-hand" aria-hidden="true">
+                    <div class="orbit-dot"></div>
+                </div>
+                <div class="circle-center">
+                    <strong id="circle-bpm">66</strong>
+                    <small>BPM</small>
+                </div>
+                <div class="count-in" id="count-in" hidden>
+                    <span id="count-in-number">4</span>
+                    <small id="count-in-label">4 → 3 → 2 → 1 · START</small>
+                </div>
+            </div>
+
+            <div class="feedback" aria-live="polite">
+                <strong id="timing">KÉSZEN ÁLLSZ?</strong>
+                <span id="accuracy">Indítás után 4 → 3 → 2 → 1 jön. START után a következő érkezésre koppints.</span>
+            </div>
+
+            <button id="tap-btn" class="tap-pad" type="button" disabled>
+                <span>KOPPINTS</span>
+                <small>mobilon érintés · gépen SPACE</small>
+            </button>
+
+            <div class="play-actions">
+                <button id="start-btn" class="primary" type="button">▶ INDÍTÁS</button>
+                <button id="next-btn" class="primary" type="button" hidden>▶ KÖVETKEZŐ KÖR</button>
+                <button id="stop-btn" class="ghost" type="button" disabled>LEÁLLÍTÁS ÉS MENTÉS</button>
+            </div>
+        </section>
+
+        <section class="round-result" id="round-result" hidden>
+            <div class="result-kicker">KÖR TELJESÍTVE</div>
+            <h2 id="result-title">STABILITÁS</h2>
+            <div class="result-grid">
+                <div><small>PONT</small><strong id="round-points">0</strong></div>
+                <div><small>TALÁLAT</small><strong id="round-hits">0 / 8</strong></div>
+                <div><small>ÁTLAG</small><strong id="round-average">—</strong></div>
+                <div><small>LEGJOBB</small><strong id="round-best">—</strong></div>
+            </div>
+            <div class="progression-note" id="progression-note"></div>
+        </section>
+
+        <section class="hud" aria-label="Statisztikák">
+            <div class="hud-item"><small>PONT</small><strong id="score">0</strong></div>
+            <div class="hud-item"><small>SZÉRIA</small><strong id="streak">0</strong></div>
+            <div class="hud-item"><small>ÁTLAG</small><strong id="avg-error">—</strong></div>
+            <div class="hud-item"><small>DRIFT</small><strong id="drift">—</strong></div>
+        </section>
+
+        <section class="audio-card">
+            <div class="audio-row">
+                <label class="toggle-label" for="sound-enabled">
+                    <input type="checkbox" id="sound-enabled" checked>
+                    <span>METRONÓM</span>
+                </label>
+                <div class="volume-wrap">
+                    <span>HANGERŐ</span>
+                    <input type="range" id="volume" min="0" max="100" value="42" aria-label="Metronóm hangereje">
+                </div>
+            </div>
+
+            <label class="select-label" for="groove-mode">
+                <span>HÁTTÉR GROOVE</span>
+                <select id="groove-mode" aria-label="Háttér groove kiválasztása">
+                    <option value="auto">AUTO</option>
+                    <option value="off">Kikapcsolva</option>
+                    <option value="basic">Basic beat</option>
+                    <option value="nokick">Kick nélküli groove</option>
+                    <option value="syncopated">Szinkópás groove</option>
+                </select>
+            </label>
+            <p class="audio-note" id="groove-note">AUTO módban a program körönként választ groove-ot. A választást két kör között bármikor átírhatod.</p>
+        </section>
+
+        <section class="block-summary" id="block-summary" hidden>
+            <div class="summary-heading">
+                <div>
+                    <span class="summary-kicker" id="summary-kicker">NAPI BEMELEGÍTÉS KÉSZ</span>
+                    <h2 id="summary-title">5 KÖR TELJESÍTVE</h2>
+                    <p id="summary-subtitle">Nézd meg a kiértékelést, vagy indulhat újabb 5 kör.</p>
+                </div>
+                <span class="summary-badge" id="summary-badge">1. BLOKK</span>
+            </div>
+
+            <div class="summary-grid">
+                <div><small>BLOKKPONT</small><strong id="summary-score">0</strong></div>
+                <div><small>PONTOSSÁG</small><strong id="summary-accuracy">0%</strong></div>
+                <div><small>ÁTLAG</small><strong id="summary-average">—</strong></div>
+                <div><small>DRIFT</small><strong id="summary-drift">—</strong></div>
+            </div>
+
+            <div class="summary-actions">
+                <button id="evaluation-btn" class="summary-action advice-action" type="button">
+                    <span class="action-icon">◎</span>
+                    <span><strong>KIÉRTÉKELÉS / TANÁCS</strong><small>Mit mutat az 5 köröd?</small></span>
+                </button>
+                <button id="continue-btn" class="summary-action continue-action" type="button">
+                    <span class="action-icon">▶</span>
+                    <span><strong>TOVÁBB JÁTSZOM</strong><small>Induljon újabb 5 kör</small></span>
+                </button>
+            </div>
+
+            <div class="evaluation-panel" id="evaluation-panel" hidden>
+                <div class="evaluation-title">
+                    <span>EDZÉSI TANÁCS</span>
+                    <strong id="advice-headline">Stabil alap</strong>
+                </div>
+                <div class="advice-list">
+                    <article><small>TENDENCIA</small><p id="advice-trend">—</p></article>
+                    <article><small>MI TÖRTÉNT?</small><p id="advice-analysis">—</p></article>
+                    <article><small>MIRE FIGYELJ?</small><p id="advice-focus">—</p></article>
+                    <article><small>KÖVETKEZŐ CÉL</small><p id="advice-goal">—</p></article>
+                </div>
+                <div class="comparison-note" id="comparison-note" hidden></div>
+                <button id="continue-from-eval" class="evaluation-continue" type="button">▶ ÚJABB 5 KÖR</button>
+            </div>
+        </section>
+
+        <section class="record-card">
+            <div><small>LEGJOBB EREDMÉNY</small><strong id="best-score">0</strong></div>
+            <div><small>LEGJOBB SZÉRIA</small><strong id="best-streak">0</strong></div>
+        </section>
+
+        <details class="learn-box">
+            <summary>ⓘ MIT TANÍT EZ?</summary>
+            <div>
+                <h3>A tempótartás a felvétel alapja</h3>
+                <p>A cél nem a vizuál követése, hanem egy stabil belső pulzus kialakítása.</p>
+                <ul>
+                    <li>Indítás előtt 4 ütéses előszámolást kapsz, így a pontozás csak akkor indul, amikor már felvetted a tempót.</li>
+                    <li>A nehézség csak sikeres kör után nő. Ha még nincs meg a stabilitás, ugyanazon a szinten gyakorolsz tovább.</li>
+                    <li>A vizuális segítség később halványul, majd ghost módban a metronóm is időnként elhallgat.</li>
+                    <li>A groove szabadon választható; AUTO módban a program változatos zenei környezetet ad.</li>
+                </ul>
+                <div class="learn-ref">A tananyagban: M2 · Tempó, ütem, ritmus</div>
+            </div>
+        </details>
+
+        <footer>Producer360 · PULZUS V3 · Roli tesztbuild</footer>
+    </main>
+</body>
+</html>
